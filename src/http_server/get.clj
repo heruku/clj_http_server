@@ -12,4 +12,3 @@
   (if (contains? files (filename request))
     (success (get files (filename request)))
     {:status 404}))
-
