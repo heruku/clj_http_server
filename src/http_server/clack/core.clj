@@ -1,6 +1,6 @@
 (ns http_server.clack.core
-  (use [http_server.clack.request]
-       [http_server.clack.response]))
+  (use [http_server.clack.request :as request]
+       [http_server.clack.response :as response]))
 
 (def middleware (atom []))
 
@@ -12,6 +12,6 @@
 
 (defn clack [raw-request]
   (->> raw-request
-       parse
+       request/parse
        enter-middleware
-       raw-response))
+       response/raw-response))

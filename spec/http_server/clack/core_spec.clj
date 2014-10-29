@@ -8,4 +8,4 @@
 (describe "clack"
   (it "returns 200 ok for simple get"
     (use-middleware two-hundred-ok-app)
-    (should= "HTTP/1.1 200 OK" (clack "GET / HTTP/1.1"))))
+    (should= "HTTP/1.1 200 OK\r\n\r\n" (clack "GET / HTTP/1.1"))))

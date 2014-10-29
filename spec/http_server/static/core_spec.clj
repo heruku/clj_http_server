@@ -10,4 +10,4 @@
 (describe "static"
   (context "dispatch"
     (it "does get when request is get"
-      (should-invoke do-get {:with [get-env nil]} (app nil get-env)))))
+      (should-invoke do-get {:with [get-env files]} (app nil get-env)))))

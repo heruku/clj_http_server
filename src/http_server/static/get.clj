@@ -1,14 +1,15 @@
-(ns http_server.static.get)
+(ns http_server.static.get
+  (use [http_server.static.file]))
 
 (defn- filename [request]
-  (subs (:path request) 1))
+  (:path request))
 
 (defn- success [content]
-  {:status 200 
-   :content content 
-   :headers {"Content-Length" (count content)}})
+  [200 {"Content-Length" (count content)} content])
 
 (defn do-get [request files]
+  (println (filename request))
+  (map println files)
   (if (contains? files (filename request))
-    (success (get files (filename request)))
-    {:status 404}))
+    (success (contents (get files (filename request))))
+    [404 {} ""]))
