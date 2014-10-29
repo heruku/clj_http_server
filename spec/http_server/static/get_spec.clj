@@ -1,6 +1,6 @@
-(ns http_server.get_spec
+(ns http_server.static.get_spec
   (use [speclj.core]
-       [http_server.get]))
+       [http_server.static.get]))
 
 (def files {"file1" "file1 content"
             "file2" "file2 content"

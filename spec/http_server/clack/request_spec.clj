@@ -1,6 +1,7 @@
-(ns http_server.request_spec
+(ns http_server.clack.request_spec
   (use [speclj.core]
-       [http_server.request]))
+       [http_server.clack.request]
+       [http_server.clack.methods]))
 
 (describe "parsing"
   (context "method"

@@ -1,4 +1,4 @@
-(ns http_server.get)
+(ns http_server.static.get)
 
 (defn- filename [request]
   (subs (:path request) 1))

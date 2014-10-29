@@ -1,6 +1,5 @@
-(ns http_server.request)
-
-(def GET :get)
+(ns http_server.clack.request
+  (use http_server.clack.methods))
 
 (defn parse-path [raw-request]
   (-> raw-request
