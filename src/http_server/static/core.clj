@@ -14,9 +14,9 @@
 
 (defn initialize-static [dirname]
   (doseq [file  (file-seq (clojure.java.io/file dirname))]
-    (add-file file dirname)))
+    (if (.isFile file)
+      (add-file file dirname))))
 
 (defn app [_next env]
-  (map println @files)
   (cond 
     (= (:method env) GET) (do-get env @files)))

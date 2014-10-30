@@ -8,7 +8,6 @@
   [200 {"Content-Length" (count content)} content])
 
 (defn do-get [request files]
-  (println (filename request))
   (map println files)
   (if (contains? files (filename request))
     (success (contents (get files (filename request))))
