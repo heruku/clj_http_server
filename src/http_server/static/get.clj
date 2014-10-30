@@ -4,10 +4,11 @@
 (defn- filename [request]
   (:path request))
 
-(defn- success [content]
-  [200 {"Content-Length" (count content)} content])
+(defn- success [file]
+  [200 {"Content-Length" (length file)
+        "Content-Type" (content-type file)} (contents file)])
 
 (defn do-get [request files]
   (if (contains? files (filename request))
-    (success (contents (get files (filename request))))
+    (success (get files (filename request)))
     [404 {} ""]))

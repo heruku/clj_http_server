@@ -1,4 +1,5 @@
 (ns http_server.clack.methods)
 
-(def GET :get)
-(def POST :post)
+(def GET "GET")
+(def POST "POST")
+(def PUT "PUT")

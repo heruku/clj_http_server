@@ -4,11 +4,12 @@
        [http_server.static.memory_file])
   (:import http_server.static.memory_file.MemoryFile))
 
-(def files {"file1" (MemoryFile. "file1 content")
-            "file2" (MemoryFile. "file2 content")
-            "big-file" (MemoryFile. (apply str (take 10000 (repeat "a"))))})
+(def files {"/file1" (MemoryFile. "file1 content" "text/plain")
+            "/file2" (MemoryFile. "file2 content" "text/plain")
+            "/big-file" (MemoryFile. (apply str (take 10000 (repeat "a"))) "text/plain")
+            "/image-file.jpg" (MemoryFile. "image-content" "image/jpg")})
 
-(defn- get-path [path]
+(defn get-path [path]
   (do-get {:path path} files))
 
 (defn status-of [response]
@@ -35,8 +36,7 @@
     (should= "file1 content" (body-of (get-path "/file1"))))
 
   (it "returns contents of file2"
-    (should= "file2 content" (body-of (get-path "/file2"))))
-  )
+    (should= "file2 content" (body-of (get-path "/file2")))))
 
 (describe "content length header"
   (it "returns content length of small file"
@@ -44,3 +44,7 @@
 
   (it "returns content length of big file"
       (should= 10000 (get (headers-of (get-path "/big-file")) "Content-Length"))))
+
+(describe "content type header"
+  (it "returns content type"
+      (should= "image/jpg" (get (headers-of (get-path "/image-file.jpg")) "Content-Type"))))

@@ -1,5 +1,7 @@
 (ns http_server.static.core
   (use [http_server.static.get]
+       [http_server.static.post]
+       [http_server.static.put]
        [http_server.clack.methods]
        [http_server.static.disk_file])
   (import http_server.static.disk_file.DiskFile))
@@ -17,6 +19,15 @@
     (if (.isFile file)
       (add-file file dirname))))
 
-(defn app [_next env]
-  (cond 
-    (= (:method env) GET) (do-get env @files)))
+(defn call-method [env]
+ (cond 
+  (= (:method env) GET) (do-get env @files)
+  (= (:method env) POST) (do-post env @files)
+  (= (:method env) PUT) (do-put env @files)
+  ))
+
+(defn app [next-app env]
+  (println env)
+  (if (contains? @files (:path env))
+    (call-method env)
+    (next-app env)))

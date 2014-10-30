@@ -12,6 +12,9 @@
 
     (it "404" 
       (should-contain "404 Not Found" (raw-response [404 {} ""]))))
+
+    (it "405" 
+      (should-contain "405 Method Not Allowed" (raw-response [405 {} ""]))) 
   
   (context "headers"
     (it "formats arbitrary headers in correct format"

@@ -2,13 +2,19 @@
   (use [http_server.clack.request :as request]
        [http_server.clack.response :as response]))
 
+(defn four-oh-four-app [env]
+  [404 {} ""])
+
 (def middleware (atom []))
 
-(defn use-middleware [app]
-   (swap! middleware conj app))
+(defn use-middleware [& apps]
+   (reset! middleware apps))
+
+(defn linked-middleware [middleware]
+  (reduce #(partial %2 %1) four-oh-four-app (reverse middleware)))
 
 (defn enter-middleware [env]
-   ((first @middleware) nil env))
+  ((linked-middleware @middleware) env))
 
 (defn clack [raw-request]
   (->> raw-request
