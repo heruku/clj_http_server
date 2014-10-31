@@ -3,6 +3,6 @@
 
 (defrecord MemoryFile [contents content-type]
   File
-  (contents [this] (:contents this))
+  (contents [this] (bytes (byte-array (map byte (:contents this)))))
   (content-type [this] (:content-type this))
   (length [this] (count (:contents this))))

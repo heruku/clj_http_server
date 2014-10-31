@@ -22,7 +22,7 @@
   (apply str (map header-from (vec headers))))
 
 (defn raw-response [[status headers body]]
-  (str (status-line  status)
+  (.getBytes (str (status-line  status)
        (header-lines headers)
        line-separator
-       body))
+       body)))

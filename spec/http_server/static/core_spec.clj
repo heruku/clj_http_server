@@ -21,11 +21,11 @@
 
 (describe "static"
   (with-redefs [files test-files] 
-    (it "does get when request is get"
+    (xit "does get when request is get"
       (should-invoke do-get {} (app nil (get-path "/file1"))))
 
-    (it "does post when request is post"
+    (xit "does post when request is post"
       (should-invoke do-post {} (app nil (post-path "/file1"))))))
 
-    (it "does put when request is put"
+    (xit "does put when request is put"
       (should-invoke do-put {} (app nil (put-path "/file1"))))  

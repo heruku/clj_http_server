@@ -23,11 +23,9 @@
  (cond 
   (= (:method env) GET) (do-get env @files)
   (= (:method env) POST) (do-post env @files)
-  (= (:method env) PUT) (do-put env @files)
-  ))
+  (= (:method env) PUT) (do-put env @files)))
 
 (defn app [next-app env]
-  (println env)
   (if (contains? @files (:path env))
     (call-method env)
     (next-app env)))

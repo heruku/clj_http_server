@@ -9,6 +9,9 @@
             "/big-file" (MemoryFile. (apply str (take 10000 (repeat "a"))) "text/plain")
             "/image-file.jpg" (MemoryFile. "image-content" "image/jpg")})
 
+(defn to-byte-seq [string]
+  (seq (bytes (byte-array (map byte string)))))
+
 (defn get-path [path]
   (do-get {:path path} files))
 
@@ -33,10 +36,10 @@
 
 (describe "content"
   (it "returns contents of file1"
-    (should= "file1 content" (body-of (get-path "/file1"))))
+    (should= (to-byte-seq "file1 content") (seq (body-of (get-path "/file1")))))
 
   (it "returns contents of file2"
-    (should= "file2 content" (body-of (get-path "/file2")))))
+    (should= (to-byte-seq "file2 content") (seq (body-of (get-path "/file2"))))))
 
 (describe "content length header"
   (it "returns content length of small file"

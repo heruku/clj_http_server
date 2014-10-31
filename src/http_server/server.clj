@@ -8,7 +8,7 @@
   (.readLine (io/reader socket)))
 
 (defn send-sock [socket msg]
-  (let [writer (io/writer socket)]
+  (let [writer (io/output-stream socket)]
       (.write writer msg)
       (.flush writer)))
 
@@ -21,6 +21,6 @@
     (recur)))
 
 (defn start [port public-dir]
-  (initialize-static public-dir)
+  (static/initialize-static public-dir)
   (clack/use-middleware static/app)
   (serve port clack))
