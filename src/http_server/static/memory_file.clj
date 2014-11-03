@@ -5,4 +5,7 @@
   File
   (contents [this] (bytes (byte-array (map byte (:contents this)))))
   (content-type [this] (:content-type this))
-  (length [this] (count (:contents this))))
+  (length [this] (count (:contents this)))
+  (replace-contents [this new-contents]
+    (MemoryFile. new-contents (:content-type this)))
+  )

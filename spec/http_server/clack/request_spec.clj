@@ -1,10 +1,8 @@
 (ns http_server.clack.request_spec
   (use [speclj.core]
+       [http_server.spec_helper]
        [http_server.clack.request]
        [http_server.clack.methods]))
-
-(defn request-reader [string]
-  (clojure.java.io/reader (char-array string)))
 
 (describe "parsing"
   (context "method"
@@ -31,4 +29,15 @@
               "Content-Length" "5"} (:headers (parse (request-reader "GET /hello/world HTTP/1.1\r\nFrom:uku.taht@gmail.com\r\nContent-Length:5\r\n")))))
 
   (it "trims whitespace from headers"
-    (should= {"From" "uku.taht@gmail.com" } (:headers (parse (request-reader "GET /hello/world HTTP/1.1\r\nFrom  :   uku.taht@gmail.com\r\n"))))))
+    (should= {"From" "uku.taht@gmail.com" } (:headers (parse (request-reader "GET /hello/world HTTP/1.1\r\nFrom  :   uku.taht@gmail.com\r\n")))))
+
+  (it "can handle header values with colons in them"
+    (should= {"Host" "localhost:5000" } (:headers (parse (request-reader "GET /hello/world HTTP/1.1\r\nHost: localhost:5000\r\n")))))
+
+  (it "reads the body"
+    (should= "thebody" (:body (parse (request-reader "GET /hello/world HTTP/1.1\r\nContent-Length: 7\r\n\r\nthebody\r\n")))))
+
+  (context "convenience"
+    (it "parses the etag header"
+      (should= "etag" (:etag (parse (request-reader "GET / HTTP/1.1\r\nIf-Match: etag\r\n\r\n"))))))
+  )  

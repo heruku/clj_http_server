@@ -3,4 +3,5 @@
 (defprotocol File
   (contents [this])
   (content-type [this])
-  (length [this]))
+  (length [this])
+  (replace-contents [this new-contents]))

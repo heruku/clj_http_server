@@ -10,8 +10,9 @@
   (case status
     200 "200 OK"
     204 "204 No Content"
+    404 "404 Not Found"
     405 "405 Method Not Allowed"
-    404 "404 Not Found"))
+    409 "409 Conflict"))
 
 (defn status-line [status]
   (str http-version " " (response-code status) line-separator))
@@ -33,10 +34,10 @@
                   (header-lines headers)
                   line-separator)))
 
-(defn bytes-if-not [body]
+(defn bytes-if-string [body]
   (if (instance? String body)
     (byte-array (map byte body))
     body))
 
 (defn raw-response [[status headers body]]
-  (merge-bytes (leading-bytes status headers) (bytes-if-not body)))
+  (merge-bytes (leading-bytes status headers) (bytes-if-string body)))

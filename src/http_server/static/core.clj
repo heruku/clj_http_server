@@ -25,7 +25,7 @@
   (= (:method env) GET) (do-get env @files)
   (= (:method env) POST) (do-post env @files)
   (= (:method env) PUT) (do-put env @files)
-  (= (:method env) PATCH) (do-patch env @files)))
+  (= (:method env) PATCH) (do-patch env files)))
 
 (defn app [next-app env]
   (if (contains? @files (:path env))
