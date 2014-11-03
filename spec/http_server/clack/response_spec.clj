@@ -19,6 +19,9 @@
     (it "200"
       (should-contain "200 OK" (String. (raw-response [200 {} ""]))))
 
+    (it "204"
+      (should-contain "204 No Content" (String. (raw-response [204 {} ""]))))
+
     (it "404" 
       (should-contain "404 Not Found" (String. (raw-response [404 {} ""])))))
 
@@ -32,5 +35,7 @@
       (should-contain "Another-Header: AnotherValue" res))))
   
   (context "body"
-     (it "contains the body"
+     (it "contains the body if it comes in as string"
+       (should-contain "body" (String. (raw-response [200 {} "body"]))))   
+     (it "contains the body if it comes in as bytes"
        (should-contain "body" (String. (raw-response [200 {} (to-bytes "body")]))))) )

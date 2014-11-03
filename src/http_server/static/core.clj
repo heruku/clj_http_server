@@ -2,6 +2,7 @@
   (use [http_server.static.get]
        [http_server.static.post]
        [http_server.static.put]
+       [http_server.static.patch]
        [http_server.clack.methods]
        [http_server.static.disk_file])
   (import http_server.static.disk_file.DiskFile))
@@ -23,7 +24,8 @@
  (cond 
   (= (:method env) GET) (do-get env @files)
   (= (:method env) POST) (do-post env @files)
-  (= (:method env) PUT) (do-put env @files)))
+  (= (:method env) PUT) (do-put env @files)
+  (= (:method env) PATCH) (do-patch env @files)))
 
 (defn app [next-app env]
   (if (contains? @files (:path env))

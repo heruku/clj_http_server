@@ -8,7 +8,7 @@
 (def middleware (atom []))
 
 (defn use-middleware [& apps]
-   (reset! middleware apps))
+  (reset! middleware apps))
 
 (defn linked-middleware [middleware]
   (reduce #(partial %2 %1) four-oh-four-app (reverse middleware)))
@@ -16,8 +16,8 @@
 (defn enter-middleware [env]
   ((linked-middleware @middleware) env))
 
-(defn clack [raw-request]
-  (->> raw-request
+(defn clack [reader]
+  (->> reader
        request/parse
        enter-middleware
        response/raw-response))

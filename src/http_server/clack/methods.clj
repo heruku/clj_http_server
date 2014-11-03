@@ -3,3 +3,4 @@
 (def GET "GET")
 (def POST "POST")
 (def PUT "PUT")
+(def PATCH "PATCH")

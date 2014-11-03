@@ -9,6 +9,7 @@
 (defn response-code [status]
   (case status
     200 "200 OK"
+    204 "204 No Content"
     405 "405 Method Not Allowed"
     404 "404 Not Found"))
 
