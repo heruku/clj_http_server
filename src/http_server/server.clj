@@ -23,5 +23,5 @@
 
 (defn start [port public-dir]
   (static/initialize-static public-dir)
-  (clack/use-middleware static/app)
+  (clack/use-middleware static/app cob/cob)
   (serve port clack))

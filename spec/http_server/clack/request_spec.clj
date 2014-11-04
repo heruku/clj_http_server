@@ -19,7 +19,7 @@
     (should= "/hello/world" (:path (parse (request-reader "GET /hello/world HTTP/1.1")))))
 
   (it "parses http version"
-    (should= "1.1" (:http_version (parse (request-reader "GET /hello/world HTTP/1.1")))))
+    (should= "HTTP/1.1" (:http_version (parse (request-reader "GET /hello/world HTTP/1.1")))))
 
   (it "parses a header"
     (should= {"From" "uku.taht@gmail.com"} (:headers (parse (request-reader "GET /hello/world HTTP/1.1\r\nFrom:uku.taht@gmail.com\r\n")))))
@@ -39,5 +39,8 @@
 
   (context "convenience"
     (it "parses the etag header"
-      (should= "etag" (:etag (parse (request-reader "GET / HTTP/1.1\r\nIf-Match: etag\r\n\r\n"))))))
+      (should= "etag" (:etag (parse (request-reader "GET / HTTP/1.1\r\nIf-Match: etag\r\n\r\n")))))
+
+    (it "parses the host header"
+      (should= "host" (:host (parse (request-reader "GET / HTTP/1.1\r\nHost: host\r\n\r\n")))))) 
   )  

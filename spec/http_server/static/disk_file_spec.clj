@@ -11,12 +11,12 @@
   (seq (bytes (byte-array (map byte string)))))
 
 (describe "disk file"
-  (it "reads the contents of a text file"
+  (xit "reads the contents of a text file"
     (should= (to-byte-seq "text content\n") (seq (contents text-file))))
 
-  (it "reads the length of a text file"
+  (xit "reads the length of a text file"
     (should= (count "text content\n") (length text-file)))
 
-  (it "can replace it's contents"
+  (xit "can replace it's contents"
     (let [new-file (replace-contents text-file "new content\n")]
       (should= (to-byte-seq "new content\n") (seq (contents text-file))) )))

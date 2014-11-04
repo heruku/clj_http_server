@@ -16,6 +16,11 @@
 
     (it "204"
       (should-contain "204 No Content" (String. (raw-response [204 {} ""]))))
+    (it "301"
+      (should-contain "301 Moved Permanently" (String. (raw-response [301 {} ""]))))
+
+    (it "302"
+      (should-contain "302 Found" (String. (raw-response [302 {} ""]))))
 
     (it "404" 
       (should-contain "404 Not Found" (String. (raw-response [404 {} ""]))))

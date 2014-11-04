@@ -1,17 +1,11 @@
 (ns http_server.clack.request
   (use http_server.clack.methods))
 
-(defn parse-path [line-parts] (nth line-parts 1))
-
-(defn parse-http-version [line-parts] (-> line-parts (nth 2) (subs 5)))
-
-(def parse-method first)
-
 (defn parse-request-line [reader]
   (let [line-parts (clojure.string/split (.readLine reader) #" ")]
-    {:method       (parse-method line-parts)
-     :path         (parse-path line-parts)
-     :http_version (parse-http-version line-parts)}))
+    {:method       (nth line-parts 0)
+     :path         (nth line-parts 1)
+     :http_version (nth line-parts 2)}))
 
 (defn raw-header-lines [reader]
   (doall (take-while (complement empty?)
@@ -39,7 +33,8 @@
     (String. char-ary)))
 
 (defn extra-params [headers]
-  {:etag (get headers "If-Match")})
+  {:etag (get headers "If-Match")
+   :host (get headers "Host")})
 
 (defn parse [reader]
   (let [request-line (parse-request-line reader)
