@@ -10,8 +10,10 @@
   (case status
     200 "200 OK"
     204 "204 No Content"
+    206 "206 Partial Content"
     301 "301 Moved Permanently"
     302 "302 Found"
+    401 "401 Unauthorized"
     404 "404 Not Found"
     405 "405 Method Not Allowed"
     409 "409 Conflict"))

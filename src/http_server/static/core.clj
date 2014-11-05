@@ -27,7 +27,22 @@
   (= (:method env) PUT) (do-put env @files)
   (= (:method env) PATCH) (do-patch env files)))
 
+(defn link [filename]
+  (str "<a href=\"" filename "\">" (subs filename 1) "</a>"))
+
+(defn make-links [files]
+  (->> (keys files)
+       (map link)
+       (clojure.string/join "\n")))
+
+(defn index []
+  [200 {} (make-links @files)])
+
+(defn index-request? [{:keys [path method]}]
+  (and (= method GET) (= path "/")))
+
 (defn app [next-app env]
-  (if (contains? @files (:path env))
-    (call-method env)
-    (next-app env)))
+  (cond 
+    (index-request? env)           (index)
+    (contains? @files (:path env)) (call-method env)
+    :else                          (next-app env)))

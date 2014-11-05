@@ -17,9 +17,6 @@
   ([method path headers] (cob nil (merge {:path path :method method} headers))))
 
 (describe "cob specific parts"
-  (it "responds 200 ok to root"
-    (should= 200 (status-of (call-cob GET "/"))))
-
   (context "/method_options"
     (it "responds 200 ok"
       (should= 200 (status-of (call-cob OPTIONS "/method_options"))))
@@ -69,6 +66,15 @@
     (it "sets location header to host's root"
       (should= "http://www.google.com/" (location-header-of (call-cob GET "/redirect" {:host "www.google.com"})))))) 
 
+  (context "GET /parameters"
+    (it "returns 200 ok"
+      (should= 200 (status-of (call-cob GET "/parameters"))))
+
+    (it "returns params in the body"
+      (should= "variable1 = 123" (body-of (call-cob GET "/parameters" {:params {"variable1" "123"}}))))
+
+    (it "returns multiple params in the body"
+      (should= "variable1 = 123\nvariable2 = 234" (body-of (call-cob GET "/parameters" {:params {"variable1" "123" "variable2" "234"}})))))
 
   (it "calls through with bad path"
     (should-invoke next-app {} (status-of (cob next-app {:path "/foobar" :method GET}))))) 

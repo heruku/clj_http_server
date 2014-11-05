@@ -13,6 +13,14 @@
         (.read stream contents)
         contents)))
 
+  (content-range [this start end]
+    (with-open [stream (clojure.java.io/input-stream (:path this))]
+      (let [length (inc (- end start))
+            contents (byte-array length)]
+        (.read stream contents start length)
+        contents)) 
+    )
+
   (content-type [this] 
     (Files/probeContentType (Paths/get (URI. (str "file://" (:path this))))))
 

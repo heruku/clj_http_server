@@ -12,6 +12,9 @@
   (it "reads the contents of a text file"
     (should= (to-byte-seq "text content\n") (seq (contents text-file))))
 
+  (it "reads a range of bytes from text file"
+    (should= (to-byte-seq "text ") (seq (content-range text-file 0 4))))
+
   (it "reads the length of a text file"
     (should= (count "text content\n") (length text-file)))
 

@@ -1,10 +1,19 @@
 (ns http_server.clack.request
   (use http_server.clack.methods))
 
+(defn path [line-parts]
+  (let [url (second line-parts)]
+    (first (clojure.string/split url #"\?"))))
+
+(defn query-string [line-parts]
+  (let [url (second line-parts)]
+    (second (clojure.string/split url #"\?"))))
+
 (defn parse-request-line [reader]
   (let [line-parts (clojure.string/split (.readLine reader) #" ")]
-    {:method       (nth line-parts 0)
-     :path         (nth line-parts 1)
+    {:method       (first line-parts)
+     :path         (path line-parts)
+     :query-string (query-string line-parts)
      :http_version (nth line-parts 2)}))
 
 (defn raw-header-lines [reader]
@@ -32,15 +41,37 @@
     (.read reader char-ary 0 n-bytes)
     (String. char-ary)))
 
-(defn extra-params [headers]
+(defn extract-param-pairs [string]
+  (clojure.string/split string #"&"))
+
+(defn split-param-values [pair]
+  (clojure.string/split pair #"="))
+
+(defn pad-if-no-value [pair]
+  (if (= 1 (count pair))
+    [(first pair) ""]
+    pair))
+
+(defn extract-params [request-line]
+  (if (:query-string request-line) 
+    (->> (:query-string request-line)
+          extract-param-pairs
+          (map split-param-values)
+          (map pad-if-no-value)
+          flatten
+          (map #(java.net.URLDecoder/decode %))
+          (apply hash-map))))
+
+(defn extra-params [request-line headers]
   {:etag (get headers "If-Match")
-   :host (get headers "Host")})
+   :host (get headers "Host")
+   :params (extract-params request-line)})
 
 (defn parse [reader]
   (let [request-line (parse-request-line reader)
         headers      (headers reader)
         body         (body reader (content-length headers))
-        extra-params (extra-params headers)]
+        extra-params (extra-params request-line headers)]
     (-> request-line 
         (assoc :headers headers)
         (assoc :body body)

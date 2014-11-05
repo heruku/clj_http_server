@@ -3,9 +3,6 @@
 
 (def form-data (atom ""))
 
-(defn get-root [env]
-  [200 {} ""])
-
 (defn show-options [env]
   [200 {"Allow" "GET,HEAD,POST,OPTIONS,PUT"} ""])
 
@@ -24,16 +21,24 @@
   (reset! form-data "")
   [200 {} ""])
 
+(defn join-params [params]
+  (->> (vec params)
+       (map (partial clojure.string/join " = "))
+       (clojure.string/join "\n")))
+
+(defn get-parameters [env]
+  [200 {} (join-params (:params env))])
+
 (defn get-redirect [env]
   [301 {"Location" (str "http://" (:host env) "/")} ""])
 
 (def routes
-  {[GET     "/"]               get-root
-   [OPTIONS "/method_options"] show-options
+  {[OPTIONS "/method_options"] show-options
    [GET     "/form"          ] get-form
    [POST    "/form"          ] post-form
    [PUT     "/form"          ] put-form
    [DELETE  "/form"          ] delete-form
+   [GET     "/parameters"    ] get-parameters
    [GET     "/redirect"      ] get-redirect})  
 
 (defn cob [next-app env]
