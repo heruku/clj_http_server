@@ -1,13 +1,13 @@
 (ns http_server.static.core
   (use [http_server.static.get]
-       [http_server.static.post]
-       [http_server.static.put]
        [http_server.static.patch]
        [http_server.clack.methods]
        [http_server.static.disk_file])
   (import http_server.static.disk_file.DiskFile))
 
 (def files (atom {}))
+
+(def method-not-allowed [405 {} ""])
 
 (defn add-file [java-file dirname]
   (let [abs-path (.getAbsolutePath java-file)
@@ -23,9 +23,8 @@
 (defn call-method [env]
  (cond 
   (= (:method env) GET) (do-get env @files)
-  (= (:method env) POST) (do-post env @files)
-  (= (:method env) PUT) (do-put env @files)
-  (= (:method env) PATCH) (do-patch env files)))
+  (= (:method env) PATCH) (do-patch env files)
+  :else method-not-allowed))
 
 (defn link [filename]
   (str "<a href=\"" filename "\">" (subs filename 1) "</a>"))

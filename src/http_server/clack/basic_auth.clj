@@ -20,11 +20,10 @@
 
 (defn basic-auth [protected-path credentials next-app env]
   (if (not (should-authorize? protected-path env)) 
-    (next-app env))
-
-  (if (authorized? credentials env)
     (next-app env)
-    [401 {} "Authentication required"]))
+    (do (if (authorized? credentials env)
+        (next-app env)
+        [401 {} "Authentication required"]))))
 
 (defn encoded [username pass]
   (let [encoder (java.util.Base64/getEncoder)]

@@ -3,24 +3,10 @@
        [http_server.spec_helper]
        [http_server.static.core]
        [http_server.static.get]
-       [http_server.static.post]
-       [http_server.static.put]
        [http_server.static.patch]
        [http_server.clack.methods]
        [http_server.static.memory_file])
   (:import http_server.static.memory_file.MemoryFile))
-
-(defn get-path [path]
-  {:method GET :path path})
-
-(defn post-path [path]
-  {:method POST :path path})
-
-(defn put-path [path]
-  {:method PUT :path path})
-
-(defn patch-path [path]
-  {:method PATCH :path path})
 
 (def test-files (atom { "/file1" (MemoryFile. "file1contents" "text/plain")
                         "/file2" (MemoryFile. "file2contents" "text/plain")}))
@@ -33,17 +19,15 @@
     (with-redefs [files test-files]
       (should-invoke do-get {} (call-app GET "/file1"))))
 
-  (it "does post when request is post"
-    (with-redefs [files test-files]
-      (should-invoke do-post {} (call-app POST "/file1"))))
-
-  (it "does put when request is put"
-    (with-redefs [files test-files]
-      (should-invoke do-put {} (call-app PUT "/file1"))))
-
   (it "does patch when request is put"
     (with-redefs [files test-files]
       (should-invoke do-patch {} (call-app PATCH "/file1"))))
+
+  (it "returns 405 method not allowed for all other methods"
+    (with-redefs [files test-files]
+      (should= 405 (status-of (call-app POST "/file1")))
+      (should= 405 (status-of (call-app PUT "/file2")))
+      (should= 405 (status-of (call-app DELETE "/file1")))))
 
   (context "index"
     (it "returns 200 ok"
@@ -53,10 +37,10 @@
       (with-redefs [files test-files]
         (let [res-body (body-of (call-app GET "/"))]
           (should-contain "file1" res-body)
-          (should-contain "file2" res-body)))))
+          (should-contain "file2" res-body))))
 
     (it "contains links to all files"
       (with-redefs [files test-files]
         (let [res-body (body-of (call-app GET "/"))]
           (should-contain "<a href=\"/file1\">file1</a>" res-body)
-          (should-contain "<a href=\"/file2\">file2</a>" res-body)))))
+          (should-contain "<a href=\"/file2\">file2</a>" res-body))))))
