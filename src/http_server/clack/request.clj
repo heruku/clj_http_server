@@ -9,11 +9,15 @@
   (let [url (second line-parts)]
     (second (clojure.string/split url #"\?"))))
 
+(defn split-request-uri [line-parts]
+  (clojure.string/split (second line-parts) #"\?"))
+
 (defn parse-request-line [reader]
-  (let [line-parts (clojure.string/split (.readLine reader) #" ")]
+  (let [line-parts (clojure.string/split (.readLine reader) #" ")
+        [path q-string] (split-request-uri line-parts)]
     {:method       (first line-parts)
-     :path         (path line-parts)
-     :query-string (query-string line-parts)
+     :path         path
+     :query-string q-string
      :http_version (nth line-parts 2)}))
 
 (defn raw-header-lines [reader]
