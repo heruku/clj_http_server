@@ -18,8 +18,7 @@
       (let [length (inc (- end start))
             contents (byte-array length)]
         (.read stream contents start length)
-        contents)) 
-    )
+        contents)))
 
   (content-type [this] 
     (Files/probeContentType (Paths/get (URI. (str "file://" (:path this))))))
