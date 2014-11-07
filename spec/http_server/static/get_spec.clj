@@ -58,8 +58,20 @@
   (it "serves n first bytes of the file"
     (should= (to-byte-seq "file1") (body-seq (call-get "/file1" {:headers {"Range" "bytes=0-4"}}))))
 
+  (it "serves n-n bytes of the file"
+    (should= (to-byte-seq "le1 co") (body-seq (call-get "/file1" {:headers {"Range" "bytes=2-7"}}))))
+
   (it "returns the correct content type"
     (should= "text/plain" (content-type (call-get "/file1" {:headers {"Range" "bytes=0-4"}}))))
 
   (it "returns the number of bytes read in content length header"
-     (should= 6 (content-length (call-get "/file1" {:headers {"Range" "bytes=0-5"}})))))  
+     (should= 6 (content-length (call-get "/file1" {:headers {"Range" "bytes=0-5"}}))))  
+
+  (it "handles range header with no end specified"
+     (should= (to-byte-seq "file1 content") (body-seq (call-get "/file1" {:headers {"Range" "bytes=0-"}}))))
+
+  (it "handles range header with no end specified"
+     (should= 13 (content-length (call-get "/file1" {:headers {"Range" "bytes=0-"}}))))
+
+  (it "handles range header with no end specified"
+     (should= (to-byte-seq "file1 content") (body-seq (call-get "/file1" {:headers {"Range" "bytes=-13"}})))))    
