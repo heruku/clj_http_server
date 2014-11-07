@@ -51,6 +51,16 @@
   (it "returns content type"
       (should= "image/jpg" (content-type (call-get "/image-file.jpg"))))) 
 
+(describe "parsing the range header"
+  (it "should parse range with start and end"
+    (should= [0 4] (get-byte-range {:headers {"Range" "bytes=0-4"}} 10)))
+
+  (it "should parse range with start and end"
+    (should= [4 9] (get-byte-range {:headers {"Range" "bytes=4-"}} 10)))
+
+  (it "should parse range with start and end"
+    (should= [6 9] (get-byte-range {:headers {"Range" "bytes=-4"}} 10)))) 
+
 (describe "Partial content"
   (it "returns 206 Partial Content if range header is present"
     (should= 206 (status-of (call-get "/file1" {:headers {"Range" "bytes=0-4"}})))) 
@@ -70,8 +80,8 @@
   (it "handles range header with no end specified"
      (should= (to-byte-seq "file1 content") (body-seq (call-get "/file1" {:headers {"Range" "bytes=0-"}}))))
 
-  (it "handles range header with no end specified"
+  (it "calculates the content length form byte range with no end specified"
      (should= 13 (content-length (call-get "/file1" {:headers {"Range" "bytes=0-"}}))))
 
-  (it "handles range header with no end specified"
-     (should= (to-byte-seq "file1 content") (body-seq (call-get "/file1" {:headers {"Range" "bytes=-13"}})))))    
+  (it "handles range header with no start specified"
+     (should= (to-byte-seq "nt") (body-seq (call-get "/file1" {:headers {"Range" "bytes=-2"}})))))    

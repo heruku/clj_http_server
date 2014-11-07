@@ -1,14 +1,13 @@
 (ns http_server.static.disk_file_spec
   (use [speclj.core]
+       [http_server.spec_helper]
        [http_server.static.disk_file]
        [http_server.static.file])
-  (import (http_server.static.disk_file DiskFile)))
+  (import (http_server.static.disk_file DiskFile)
+          (java.io StringBufferInputStream)))
 
 (def text-file
   (DiskFile. "/Users/ukutaht/Desktop/code/http_server/spec/http_server/fixtures/text_file.txt"))
-
-(defn to-byte-seq [string]
-  (seq (bytes (byte-array (map byte string)))))
 
 (describe "disk file"
   (xit "reads the contents of a text file"
@@ -20,3 +19,15 @@
   (xit "can replace it's contents"
     (let [new-file (replace-contents text-file "new content\n")]
       (should= (to-byte-seq "new content\n") (seq (contents text-file))) )))
+
+(def stream (StringBufferInputStream. "file contents"))
+
+(describe "fileutils"
+  (before (.reset stream))
+  (it "reads a range from an input stream"
+    (should= (to-byte-seq "file") 
+             (seq (read-range stream 0 3))))
+
+  (it "reads a range from an input stream"
+    (should= (to-byte-seq "nts") 
+             (seq (read-range stream 10 12)))))

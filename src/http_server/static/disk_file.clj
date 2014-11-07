@@ -4,6 +4,13 @@
   (import (java.nio.file Files Paths)
           (java.net URI))) 
 
+(defn read-range [stream start end]
+  (let [length   (inc (- end start))
+        contents (byte-array length)]
+    (.skip stream start)
+    (.read stream contents 0 length)
+    contents))
+
 (defrecord DiskFile [path]
   File
 
@@ -15,10 +22,7 @@
 
   (content-range [this start end]
     (with-open [stream (clojure.java.io/input-stream (:path this))]
-      (let [length (inc (- end start))
-            contents (byte-array length)]
-        (.read stream contents start length)
-        contents)))
+      (read-range stream start end)))
 
   (content-type [this] 
     (Files/probeContentType (Paths/get (URI. (str "file://" (:path this))))))
