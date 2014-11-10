@@ -17,7 +17,7 @@
   (if (show-logs? path env) 
     [200 {} (clojure.string/join "\n" @logs)]
     (do (log-request env)
-         (next-app env))))
+        (next-app env))))
 
 (defn init-logger [path]
   (partial logger path))
