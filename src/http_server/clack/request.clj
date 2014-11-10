@@ -1,14 +1,6 @@
 (ns http_server.clack.request
   (use http_server.clack.methods))
 
-(defn path [line-parts]
-  (let [url (second line-parts)]
-    (first (clojure.string/split url #"\?"))))
-
-(defn query-string [line-parts]
-  (let [url (second line-parts)]
-    (second (clojure.string/split url #"\?"))))
-
 (defn split-request-uri [line-parts]
   (clojure.string/split (second line-parts) #"\?"))
 
@@ -29,8 +21,7 @@
 
 (defn headers [reader]
   (->> (raw-header-lines reader)
-       (map split-at-colon)
-       flatten
+       (mapcat split-at-colon)
        (map clojure.string/trim)
        (apply hash-map)))
 
@@ -52,19 +43,16 @@
   (clojure.string/split pair #"="))
 
 (defn pad-if-no-value [pair]
-  (if (= 1 (count pair))
-    [(first pair) ""]
-    pair))
+  [(first pair) (or (second pair) "")])
 
 (defn extract-params [request-line]
-  (if (:query-string request-line) 
-    (->> (:query-string request-line)
-          extract-param-pairs
-          (map split-param-values)
-          (map pad-if-no-value)
-          flatten
-          (map #(java.net.URLDecoder/decode %))
-          (apply hash-map))))
+  (if-let [q-string (:query-string request-line)]
+    (->> q-string
+         extract-param-pairs
+         (map split-param-values)
+         (mapcat pad-if-no-value)
+         (map #(java.net.URLDecoder/decode %))
+         (apply hash-map))))
 
 (defn extra-params [request-line headers]
   {:etag (get headers "If-Match")
