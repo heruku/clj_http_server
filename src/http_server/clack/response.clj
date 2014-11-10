@@ -6,17 +6,19 @@
 (def line-separator 
   "\r\n")
 
+(def status-codes 
+  {200 "200 OK"
+   204 "204 No Content"
+   206 "206 Partial Content"
+   301 "301 Moved Permanently"
+   302 "302 Found"
+   401 "401 Unauthorized"
+   404 "404 Not Found"
+   405 "405 Method Not Allowed"
+   409 "409 Conflict"})
+
 (defn response-code [status]
-  (case status
-    200 "200 OK"
-    204 "204 No Content"
-    206 "206 Partial Content"
-    301 "301 Moved Permanently"
-    302 "302 Found"
-    401 "401 Unauthorized"
-    404 "404 Not Found"
-    405 "405 Method Not Allowed"
-    409 "409 Conflict"))
+  (get status-codes status))
 
 (defn status-line [status]
   (str http-version " " (response-code status) line-separator))
