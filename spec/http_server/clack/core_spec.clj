@@ -15,7 +15,8 @@
 
 (describe "clack"
   (it "returns 200 ok for simple get"
-    (use-middleware two-hundred-ok-app)
+    (use-middleware 
+      two-hundred-ok-app)
     (should= ok-response (String. (clack (request-reader simple-get)))))
 
   (it "threads the request through all of the apps"
@@ -24,7 +25,7 @@
                     two-hundred-ok-app)
     (should= ok-response (String. (clack (request-reader simple-get)))))
 
-  (it "threads the request through all of the apps"
+  (it "if an app returns, next ones are not reached"
     (def blow-up)
     (use-middleware calls-through
                     two-hundred-ok-app
