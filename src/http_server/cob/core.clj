@@ -3,23 +3,26 @@
 
 (def form-data (atom ""))
 
+(defn ok-response [body]
+  [200 {} body])
+
 (defn show-options [env]
   [200 {"Allow" "GET,HEAD,POST,OPTIONS,PUT"} ""])
 
 (defn get-form [env]
-  [200 {} @form-data])
+  (ok-response @form-data))
 
 (defn post-form [env]
   (reset! form-data (:body env))
-  [200 {} ""])
+  (ok-response ""))
 
 (defn put-form [env]
   (reset! form-data (:body env))
-  [200 {} ""])
+  (ok-response ""))
 
 (defn delete-form [env]
   (reset! form-data "")
-  [200 {} ""])
+  (ok-response ""))
 
 (defn join-params [params]
   (->> (vec params)
@@ -27,7 +30,7 @@
        (clojure.string/join "\n")))
 
 (defn get-parameters [env]
-  [200 {} (join-params (:params env))])
+  (ok-response (join-params (:params env))))
 
 (defn get-redirect [env]
   [301 {"Location" (str "http://" (:host env) "/")} ""])

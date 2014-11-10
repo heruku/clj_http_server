@@ -13,8 +13,8 @@
   (get (headers-of response) "Location"))
 
 (defn call-cob 
-  ([method path] (cob nil {:path path :method method}))
-  ([method path headers] (cob nil (merge {:path path :method method} headers))))
+  ([method path] (cob next-app {:path path :method method}))
+  ([method path headers] (cob next-app (merge {:path path :method method} headers))))
 
 (describe "cob specific parts"
   (context "/method_options"
