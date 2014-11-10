@@ -4,7 +4,8 @@
        [http_server.spec_helper]
        [speclj.core]))
 
-(defn next-app [env])
+(defn next-app [env]
+  "Next App")
 
 (defn get-logs []
   (logger "/logs" next-app {:method GET :path "/logs"}))
@@ -26,4 +27,4 @@
     (should-contain "POST /hello HTTP/1.1" (body-of (get-logs))))
   
   (it "calls next app when i'm not trying to get the logs"
-    (should-invoke next-app {} (call-logger GET "/"))))
+    (should= (next-app {}) (call-logger GET "/"))))
