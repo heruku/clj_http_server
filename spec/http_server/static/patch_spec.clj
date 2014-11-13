@@ -2,7 +2,7 @@
   (use [speclj.core]
        [http_server.spec_helper]
        [http_server.static.memory_file]
-       [http_server.static.file]
+       [http_server.static.file :as file]
        [http_server.static.patch])
   (:import http_server.static.memory_file.MemoryFile)) 
 
@@ -28,8 +28,7 @@
       (should= 204 (status-of (good-patch "body"))))
 
     (it "replaces body with patched content"
-      (good-patch "patched")  
-      (should= "patched" (patch-file-contents))))
+      (should-invoke file/replace-contents {} (good-patch "new content\n"))))
 
   (context "conflict"
     (it "returns 409 Conflict"

@@ -1,13 +1,11 @@
 (ns http_server.static.memory_file
-  (use [http_server.static.file]))
-
-(defn get-bytes [string] (bytes (byte-array (map byte string))))
+  (:use [http_server.static.file])
+  (:import (java.io StringBufferInputStream
+                    ByteArrayOutputStream)))
 
 (defrecord MemoryFile [contents content-type]
   File
-  (contents [this] (get-bytes (:contents this)))
-  (content-range [this start end] (get-bytes (subs (:contents this) start (inc end))))
+  (in-stream [this] (StringBufferInputStream. (:contents this)))
+  (out-stream [this] (ByteArrayOutputStream.))
   (content-type [this] (:content-type this))
-  (length [this] (count (:contents this)))
-  (replace-contents [this new-contents]
-    (MemoryFile. new-contents (:content-type this))))
+  (length [this] (count (:contents this))))

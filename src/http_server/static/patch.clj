@@ -6,7 +6,7 @@
   (= (sha-sum (contents file)) etag))
 
 (defn success [env files]
-  (swap! files assoc (:path env) (replace-contents (get @files (:path env)) (:body env)))
+  (replace-contents (get @files (:path env)) (:body env))
   [204 {} ""])
 
 (defn do-patch [env files]
