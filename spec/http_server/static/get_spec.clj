@@ -52,36 +52,36 @@
       (should= "image/jpg" (content-type (call-get "/image-file.jpg"))))) 
 
 (describe "parsing the range header"
-  (it "should parse range with start and end"
+  (it "parses range with start and end"
     (should= [0 4] (get-byte-range {:headers {"Range" "bytes=0-4"}} 10)))
 
-  (it "should parse range with start and end"
+  (it "parses range with no end specified"
     (should= [4 9] (get-byte-range {:headers {"Range" "bytes=4-"}} 10)))
 
-  (it "should parse range with start and end"
+  (it "parses range with no start speficied"
     (should= [6 9] (get-byte-range {:headers {"Range" "bytes=-4"}} 10)))) 
 
 (describe "Partial content"
   (it "returns 206 Partial Content if range header is present"
     (should= 206 (status-of (call-get "/file1" {:headers {"Range" "bytes=0-4"}})))) 
 
-  (it "serves n first bytes of the file"
-    (should= (to-byte-seq "file1") (body-seq (call-get "/file1" {:headers {"Range" "bytes=0-4"}}))))
+  (it "returns the correct content type"
+    (should= "text/plain" (content-type (call-get "/file1" {:headers {"Range" "bytes=0-4"}}))))
 
   (it "serves n-n bytes of the file"
     (should= (to-byte-seq "le1 co") (body-seq (call-get "/file1" {:headers {"Range" "bytes=2-7"}}))))
 
-  (it "returns the correct content type"
-    (should= "text/plain" (content-type (call-get "/file1" {:headers {"Range" "bytes=0-4"}}))))
-
-  (it "returns the number of bytes read in content length header"
+  (it "returns the number of bytes read in n-n request"
      (should= 6 (content-length (call-get "/file1" {:headers {"Range" "bytes=0-5"}}))))  
 
-  (it "handles range header with no end specified"
-     (should= (to-byte-seq "file1 content") (body-seq (call-get "/file1" {:headers {"Range" "bytes=0-"}}))))
+  (it "serves all bytes from start to end when end is not specified"
+     (should= (to-byte-seq "le1 content") (body-seq (call-get "/file1" {:headers {"Range" "bytes=2-"}}))))
 
-  (it "calculates the content length form byte range with no end specified"
-     (should= 13 (content-length (call-get "/file1" {:headers {"Range" "bytes=0-"}}))))
+  (it "returns the number of bytes read in n- request"
+     (should= 11 (content-length (call-get "/file1" {:headers {"Range" "bytes=2-"}}))))  
 
-  (it "handles range header with no start specified"
-     (should= (to-byte-seq "nt") (body-seq (call-get "/file1" {:headers {"Range" "bytes=-2"}})))))    
+  (it "serves last n bytes when no start is specified in range request"
+     (should= (to-byte-seq "nt") (body-seq (call-get "/file1" {:headers {"Range" "bytes=-2"}}))))     
+
+  (it "returns the number of bytes read in -n request"
+     (should= 2 (content-length (call-get "/file1" {:headers {"Range" "bytes=-2"}})))) )
