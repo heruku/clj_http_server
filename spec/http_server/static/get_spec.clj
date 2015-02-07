@@ -62,26 +62,33 @@
     (should= [6 9] (get-byte-range {:headers {"Range" "bytes=-4"}} 10)))) 
 
 (describe "Partial content"
+
+  (def partial-file
+    {"/partial_file" (MemoryFile. "partial content" "text/plain")})
+
+  (defn get-partial [headers]
+    (do-get (merge {:path "/partial_file"} headers) partial-file))
+
   (it "returns 206 Partial Content if range header is present"
-    (should= 206 (status-of (call-get "/file1" {:headers {"Range" "bytes=0-4"}})))) 
+    (should= 206 (status-of (get-partial {:headers {"Range" "bytes=0-4"}})))) 
 
   (it "returns the correct content type"
-    (should= "text/plain" (content-type (call-get "/file1" {:headers {"Range" "bytes=0-4"}}))))
+    (should= "text/plain" (content-type (get-partial {:headers {"Range" "bytes=0-4"}}))))
 
   (it "serves n-n bytes of the file"
-    (should= (to-byte-seq "le1 co") (body-seq (call-get "/file1" {:headers {"Range" "bytes=2-7"}}))))
+    (should= (to-byte-seq "rtial co") (body-seq (get-partial {:headers {"Range" "bytes=2-9"}}))))
 
   (it "returns the number of bytes read in n-n request"
-     (should= 6 (content-length (call-get "/file1" {:headers {"Range" "bytes=0-5"}}))))  
+     (should= 8 (content-length (get-partial {:headers {"Range" "bytes=2-9"}}))))  
 
   (it "serves all bytes from start to end when end is not specified"
-     (should= (to-byte-seq "le1 content") (body-seq (call-get "/file1" {:headers {"Range" "bytes=2-"}}))))
+     (should= (to-byte-seq "rtial content") (body-seq (get-partial {:headers {"Range" "bytes=2-"}}))))
 
   (it "returns the number of bytes read in n- request"
-     (should= 11 (content-length (call-get "/file1" {:headers {"Range" "bytes=2-"}}))))  
+     (should= 13 (content-length (get-partial {:headers {"Range" "bytes=2-"}}))))  
 
   (it "serves last n bytes when no start is specified in range request"
-     (should= (to-byte-seq "nt") (body-seq (call-get "/file1" {:headers {"Range" "bytes=-2"}}))))     
+     (should= (to-byte-seq "nt") (body-seq (get-partial {:headers {"Range" "bytes=-2"}}))))     
 
   (it "returns the number of bytes read in -n request"
-     (should= 2 (content-length (call-get "/file1" {:headers {"Range" "bytes=-2"}})))) )
+     (should= 2 (content-length (get-partial {:headers {"Range" "bytes=-2"}})))) )
