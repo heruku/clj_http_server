@@ -33,7 +33,7 @@
   (ok-response (join-params (:params env))))
 
 (defn get-redirect [env]
-  [301 {"Location" (str "http://" (:host env) "/")} ""])
+  [302 {"Location" (str "http://" (:host env) "/")} ""])
 
 (def routes
   {[OPTIONS "/method_options"] show-options
