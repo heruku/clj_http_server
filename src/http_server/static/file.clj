@@ -23,5 +23,5 @@
 
 (defn replace-contents [file new-contents]
   (with-open [stream (out-stream file)]
-    (.write stream (.getBytes (str new-contents "\n")))
+    (.write stream (.getBytes new-contents))
     stream))
