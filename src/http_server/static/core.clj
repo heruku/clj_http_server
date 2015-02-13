@@ -9,11 +9,16 @@
 
 (def method-not-allowed [405 {} ""])
 
+(defn normalise-path [path-str]
+  (if-not (.startsWith path-str "/")
+    (str "/" path-str)
+    path-str))
+
 (defn add-file [java-file dirname]
   (let [abs-path (.getAbsolutePath java-file)
         rel-path (subs abs-path (count dirname))
         file     (DiskFile. abs-path)]
-    (swap! files assoc rel-path file)))
+    (swap! files assoc (normalise-path rel-path) file)))
 
 (defn initialize-static [dirname]
   (doseq [file  (file-seq (clojure.java.io/file dirname))]
